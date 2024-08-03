@@ -87,6 +87,15 @@ small {
     color: #666;
 }
 
+#loginLink {
+    color: #2b5f9b;
+    text-decoration: none;
+}
+
+#loginLink:hover {
+    text-decoration: underline;
+}
+
 footer {
     text-align: center;
     margin-top: 20px;
@@ -125,7 +134,7 @@ footer a:hover {
     border: 1px solid #888;
     width: 80%;
     max-width: 400px;
-    border-radius: 5px;
+    border-radius: 20px;
     text-align: center;
 }
 

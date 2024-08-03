@@ -1,1 +1,14 @@
 node_modules/
+.env
+*.log
+dist/
+build/
+*.tmp
+*.swp
+.vscode/
+.idea/
+coverage/
+.firebaserc
+firebase-debug.log
+.DS_Store
+Thumbs.db

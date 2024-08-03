@@ -116,6 +116,12 @@ window.addEventListener('click', function (event) {
     }
 });
 
+document.getElementById('loginLink').addEventListener('click', function (e) {
+    e.preventDefault();
+    // TODO: Implement login functionality
+    console.log('Login link clicked');
+});
+
 // import { addReminder } from './firebase.js';
 
 // const filterLifespans = {
