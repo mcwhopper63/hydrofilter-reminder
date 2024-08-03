@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>HydroFilter Reminder</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <div class="container">
+            <h1>HydroFilter Reminder</h1>
+            <p>Never forget to change your water filter again.</p>
+            <form id="reminderForm">
+                <div class="input-wrapper">
+                    <div class="form-group">
+                        <label for="filterType">Filter Type</label>
+                        <select id="filterType" name="filterType" required>
+                            <option value="">Select your filter type</option>
+                            <optgroup label="Pitcher Filters">
+                                <option value="brita">Brita</option>
+                                <option value="pur-pitcher">PUR Pitcher</option>
+                                <option value="puro">Puro</option>
+                                <option value="zerowater-pitcher">
+                                    ZeroWater Pitcher
+                                </option>
+                            </optgroup>
+                            <optgroup label="Faucet-Mounted Filters">
+                                <option value="pur-faucet">PUR Faucet</option>
+                                <option value="waterdrop-faucet">
+                                    Waterdrop Faucet
+                                </option>
+                            </optgroup>
+                            <optgroup label="Under-Sink Filters">
+                                <option value="aquasana-undersink">
+                                    Aquasana Under-Sink
+                                </option>
+                            </optgroup>
+                            <optgroup label="Other Systems">
+                                <option value="lifestraw">Lifestraw</option>
+                                <option value="berkey">Berkey</option>
+                                <option value="custom filter">
+                                    Custom Filter
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Filter Start Date</label>
+                        <input
+                            type="date"
+                            id="startDate"
+                            name="startDate"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="replacementDate"
+                            >Estimated Replacement Date</label
+                        >
+                        <input
+                            type="date"
+                            id="replacementDate"
+                            name="replacementDate"
+                        />
+                        <small
+                            >This date is suggested based on your filter type.
+                            <br />
+                            You can adjust it if needed.</small
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Where do you want the reminder to be sent?"
+                            required
+                        />
+                    </div>
+                    <button type="submit">Set My Reminder</button>
+                </div>
+            </form>
+            <footer>
+                <p>
+                    By submitting, you agree to our
+                    <a href="#">Privacy Policy</a>
+                </p>
+            </footer>
+        </div>
+        <div id="successModal" class="modal">
+            <div class="modal-content">
+                <h2>Your reminder has been set. Stay hydrated!</h2>
+                <button id="closeModal">Close</button>
+                <h3>Share this reminder tool with a friend!</h3>
+                <input
+                    type="email"
+                    id="friendEmail"
+                    placeholder="Enter homie's email"
+                />
+                <button id="shareButton">Share</button>
+                <p id="shareMessage"></p>
+            </div>
+        </div>
+        <script type="module" src="script.js"></script>
+    </body>
+</html>
