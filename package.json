@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "firebase": "^10.12.5"
+    "firebase": "^10.12.5",
+    "sib-api-v3-sdk": "^8.5.0"
   }
 }
