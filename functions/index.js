@@ -1,72 +1,116 @@
-const SibApiV3Sdk = require("sib-api-v3-sdk");
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const SibApiV3Sdk = require('sib-api-v3-sdk');
 
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
-// const { onRequest } = require('firebase-functions/v2/https');
-// const logger = require('firebase-functions/logger');
-
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
-
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
-const functions = require("firebase-functions");
-const BREVO_API_KEY = functions.config().brevo.api_key;
-const admin = require("firebase-admin");
 admin.initializeApp();
 
 exports.sendReminderEmail = functions.pubsub
-    .schedule("every 24 hours")
+    .schedule('every 24 hours')
     .onRun(async (context) => {
-      const now = admin.firestore.Timestamp.now();
-      const remindersSnapshot = await admin
-          .firestore()
-          .collection("reminders")
-          .where("replacementDate", "<=", now)
-          .get();
-
-      const sendEmailPromises = remindersSnapshot.docs.map(async (doc) => {
-        const reminderData = doc.data();
         const defaultClient = SibApiV3Sdk.ApiClient.instance;
-        const apiKey = defaultClient.authentications["api-key"];
-        apiKey.apiKey = BREVO_API_KEY;
+        const apiKey = defaultClient.authentications['api-key'];
+        apiKey.apiKey = functions.config().brevo.api_key;
 
         const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-        const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+        const now = admin.firestore.Timestamp.now();
 
-        sendSmtpEmail.subject = "Your Water Filter Needs Replacing";
-        sendSmtpEmail.htmlContent = `<html>
-        <body><h1>Time to Replace Your Water Filter</h1>
-        <p>Your water filter is due for a replacement. 
-        Don't forget to change it to ensure clean, fresh water!</p>
-        </body></html>`;
-        sendSmtpEmail.sender = {
-          name: "HydroFilter Reminder",
-          email: "noreply@yourapp.com",
-        };
-        sendSmtpEmail.to = [{email: reminderData.email}];
+        const remindersSnapshot = await admin
+            .firestore()
+            .collection('reminders')
+            .where('replacementDate', '<=', now)
+            .get();
 
-        try {
-          const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
-          console.log(
-              "Email sent successfully. Returned data: " +
-                        JSON.stringify(data),
-          );
-        } catch (error) {
-          console.error("Error sending email:", error);
-        }
-        console.log(`Sending reminder email to ${reminderData.email}`);
-      });
+        const sendEmailPromises = remindersSnapshot.docs.map(async (doc) => {
+            const reminderData = doc.data();
+            const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
 
-      await Promise.all(sendEmailPromises);
+            sendSmtpEmail.to = [{ email: reminderData.email }];
+            sendSmtpEmail.subject = 'Time to replace your water filter!';
+            sendSmtpEmail.htmlContent = `<h1>Your ${
+                reminderData.filterType
+            } filter needs replacing</h1>      
+        <p>You set up a reminder on 
+        ${reminderData.startDate.toDate().toLocaleDateString()}. 
+                                     It's time to replace your filter for
+                                      clean, fresh water!</p>`;
+            sendSmtpEmail.sender = {
+                name: 'HydroFilter Reminder',
+                email: 'kytwebsites@gmail.com',
+            };
+
+            try {
+                const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+                console.log(
+                    'Email sent successfully. Returned data: ' +
+                        JSON.stringify(data)
+                );
+            } catch (error) {
+                console.error('Error sending email:', error);
+            }
+        });
+
+        await Promise.all(sendEmailPromises);
+        return null;
     });
+
+// const functions = require("firebase-functions");
+// const admin = require("firebase-admin");
+// const SibApiV3Sdk = require("sib-api-v3-sdk");
+
+// admin.initializeApp();
+
+// const defaultClient = SibApiV3Sdk.ApiClient.instance;
+// const apiKey = defaultClient.authentications["api-key"];
+// apiKey.apiKey = functions.config().brevo.api_key;
+
+// exports.sendReminderEmail = functions.pubsub
+//     .schedule("every 24 hours")
+//     .onRun(async (context) => {
+//       const now = admin.firestore.Timestamp.now();
+//       const remindersSnapshot = await admin
+//           .firestore()
+//           .collection("reminders")
+//           .where("replacementDate", "<=", now)
+//           .get();
+
+//       const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+//       const sendEmailPromises = remindersSnapshot.docs.map(async (doc) => {
+//         const reminderData = doc.data();
+//         const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+
+//         sendSmtpEmail.to = [{email: reminderData.email}];
+//         sendSmtpEmail.subject = "Time to replace your water filter!";
+//         sendSmtpEmail.htmlContent = `<h1>Your ${
+//           reminderData.filterType
+//         } filter needs replacing</h1>
+//                                  <p>You set up a reminder on
+//                                   ${reminderData.startDate
+//       .toDate()
+//       .toLocaleDateString()}.
+//                                  It's time to replace
+//                                  your filter for clean,
+//                                  fresh water!</p>`;
+//         sendSmtpEmail.sender = {
+//           name: "HydroFilter Reminder",
+//           email: "noreply@yourapp.com",
+//         };
+
+//         try {
+//           const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+//           console.log(
+//               `Email sent successfully to ${
+//                 reminderData.email
+//               }. Data: ${JSON.stringify(data)}`,
+//           );
+//         } catch (error) {
+//           console.error(
+//               `Failed to send email to ${reminderData.email}:`,
+//               error,
+//           );
+//         }
+//       });
+
+//       await Promise.all(sendEmailPromises);
+//       return null;
+//     });

@@ -18,7 +18,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// this analytics line is giving me issues on the front end. let's revisit this later.
+// const analytics = getAnalytics(app);
 // Initialize Firestore
 const db = getFirestore(app);
 
